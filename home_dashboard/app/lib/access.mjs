@@ -32,14 +32,16 @@ export function identify(req, cfg, { dev = false, devUser = 'dev' } = {}) {
 export const SWITCHABLE = new Set(['light', 'switch', 'fan', 'input_boolean']);
 
 /**
- * Entities this viewer may switch: a child only their own list, a parent
- * everything the dashboard shows. Nothing outside the configuration, ever.
+ * Entities this viewer may switch: a child only their own devices, a parent
+ * everything the dashboard shows. `entitiesOf(child)` resolves a child's
+ * devices (room + extra − excluded), the same list the views show.
  */
-export function switchableEntities(cfg, identity) {
-  const own = identity.role === 'child'
-    ? cfg.children.find(c => c.id === identity.childId)?.entities || []
-    : [...cfg.entities, ...cfg.children.flatMap(c => c.entities)];
-  return new Set(own.filter(id => SWITCHABLE.has(id.split('.')[0])));
+export async function switchableEntities(cfg, identity, entitiesOf) {
+  const isChild = identity.role === 'child';
+  const kids = isChild ? cfg.children.filter(c => c.id === identity.childId) : cfg.children;
+  const ids = (await Promise.all(kids.map(entitiesOf))).flat();
+  if (!isChild) ids.push(...cfg.entities);
+  return new Set(ids.filter(id => SWITCHABLE.has(id.split('.')[0])));
 }
 
 /**

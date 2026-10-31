@@ -91,9 +91,19 @@ function childCard(c, d) {
     lunch.append(el('span', 'label', 'Lunch '), document.createTextNode(c.lunch.today));
     card.append(lunch);
   }
-  if (c.devices?.length) card.append(deviceTiles(c.devices));
+  if (c.devices?.length) card.append(...childDevices(c.devices));
   card.append(...c.status.map(statusLine));
   return card;
+}
+
+/** Room devices under "Mitt rum", hand-picked ones from elsewhere under "Annat". */
+function childDevices(devices) {
+  const room = devices.filter(d => d.inRoom);
+  const other = devices.filter(d => !d.inRoom);
+  if (!room.length) return [el('p', 'label', 'Mina lampor'), deviceTiles(other)];
+  const nodes = [el('p', 'label', 'Mitt rum'), deviceTiles(room)];
+  if (other.length) nodes.push(el('p', 'label', 'Annat'), deviceTiles(other));
+  return nodes;
 }
 
 function lessonState(l, d) {
@@ -188,7 +198,7 @@ function kidView(d) {
   const cards = [kidToday(c, d)];
   if (c.devices?.length) {
     const lights = el('section', 'card kid-devices');
-    lights.append(el('p', 'label', 'Mina lampor'), deviceTiles(c.devices));
+    lights.append(...childDevices(c.devices));
     cards.push(lights);
   }
   if (c.lunch?.today) {

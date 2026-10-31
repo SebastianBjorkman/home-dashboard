@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- `area` under a child picks up their room from Home Assistant automatically:
+  lights, switches, fans, input_booleans and temperature/humidity sensors.
+- `entities` now adds devices from elsewhere in the home, shown under "Annat".
+- `exclude` keeps room devices out that the child should not see or switch.
+- Permissions follow the same list: room + extra − excluded.
+
 ## 0.2.0
 
 - Each child can have their own devices (`entities` under the child). They show

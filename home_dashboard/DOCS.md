@@ -15,21 +15,31 @@ Ett block per barn.
 | `skola24_class` | `2B` | Klassen |
 | `skola24_group` | `2B:1` | Valfritt. Visar bara den halvklassen när klassen delas |
 | `school_menu_url` | `https://kommun.se/…/skolkoket.html` | Matsedelssidan för köket som lagar skolans mat |
-| `entities` | `- light.alva_taklampa` | Valfritt. Barnets egna enheter, som visas under "Mina lampor". Lampor, strömbrytare, fläktar och `input_boolean` kan slås av och på med ett tryck. Barnet kan bara styra det som står här. |
+| `area` | `Alvas rum` | Valfritt. Barnets rum, alltså ett område i Home Assistant. Lampor, strömbrytare, fläktar, `input_boolean` och temperatur-/fuktsensorer i rummet visas automatiskt under "Mitt rum". |
+| `entities` | `- light.hallen` | Valfritt. Fler enheter, t.ex. utanför rummet. Visas under "Annat". |
+| `exclude` | `- switch.laddare` | Valfritt. Enheter i rummet som barnet inte ska se eller kunna styra. |
 
-Exempel med lampor:
+Lampor, strömbrytare, fläktar och `input_boolean` slås av och på med ett tryck.
+Barnet kan bara styra det som visas i hens vy: rummet plus `entities`, minus `exclude`.
+
+Exempel:
 
 ```yaml
 children:
   - name: Alva
     ha_user: alva
+    area: Alvas rum
     entities:
-      - light.alva_taklampa
-      - light.alva_lavalampa
-      - sensor.alva_rumstemperatur
+      - light.hallen
+    exclude:
+      - switch.alva_laddare
 ```
 
+Områdets namn står under **Inställningar → Områden, etiketter och zoner**.
 Entitets-id hittar du under **Inställningar → Enheter och tjänster → Entiteter**.
+
+Lägger du till en ny lampa i rummet i Home Assistant dyker den upp inom fem minuter.
+Kontrollera då att den inte är något barnet inte borde styra; lägg den i `exclude` i så fall.
 
 Skolschemat fungerar för skolor som visar klasscheman utan inloggning i
 Skola24:s schemavisare. Öppna

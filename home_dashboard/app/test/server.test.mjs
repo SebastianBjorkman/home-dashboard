@@ -22,6 +22,12 @@ test('config drops invalid entries', () => {
   assert.equal(cfg.children[0].skola24, null);
 });
 
+test('room names that could break out of a template are refused', () => {
+  const areas = ['Alvas rum', 'Kök 2', 'x") }}{{ states', "a'b", '{{ x }}']
+    .map(area => normalizeConfig({ children: [{ name: 'A', area }] }).children[0].area);
+  assert.deepEqual(areas, ['Alvas rum', 'Kök 2', '', '', '']);
+});
+
 test('only the Ingress proxy is trusted, and only with user headers', () => {
   assert.equal(identify(req('172.30.32.5', ingressHeaders('pappa')), cfg).status, 403);
   assert.equal(identify(req('127.0.0.1', ingressHeaders('pappa')), cfg).status, 403);

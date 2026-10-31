@@ -6,6 +6,7 @@ import { loadConfig } from './lib/config.mjs';
 import { createRateLimiter, identify, isSameOriginWrite, switchableEntities } from './lib/access.mjs';
 import { createCache } from './lib/cache.mjs';
 import { buildDashboard } from './lib/dashboard.mjs';
+import { resolveChildEntities } from './lib/devices.mjs';
 import * as ha from './modules/homeassistant.mjs';
 
 const MAX_BODY = 1024;
@@ -56,8 +57,9 @@ export function createServer({ cfg, cache, dev = false, devUser = 'dev', rateLim
       } catch {
         return send(400, 'Felaktig begäran.');
       }
-      if (typeof entityId !== 'string' || !switchableEntities(cfg, who).has(entityId)) return send(403, 'Den enheten får du inte styra.');
       if (!ha.available()) return send(503, 'Home Assistant är inte ansluten.');
+      const allowed = await switchableEntities(cfg, who, c => resolveChildEntities(c, cache).then(r => r.ids));
+      if (typeof entityId !== 'string' || !allowed.has(entityId)) return send(403, 'Den enheten får du inte styra.');
       try {
         await ha.toggle(entityId);
         cache.invalidate('states:');

@@ -22,7 +22,7 @@ Nya versioner dyker upp i tilläggsbutiken och installeras med **Uppdatera**.
 | Nedräkning | "Sovningar kvar" till nästa lov | ✅ |
 | Kalender | Kalendrar i Home Assistant (M365, Google, ICS …) | ✅ |
 | Hemmet | Valfria sensorer/enheter från Home Assistant | ✅ |
-| Barnets lampor | Egna enheter per barn, tänd och släck med ett tryck | ✅ |
+| Barnets rum | Barnets område i HA plus valfria enheter, tänd och släck med ett tryck | ✅ |
 | Lämning & hämtning | Vem lämnar och hämtar | Planerad |
 | Aktiviteter, sysslor, inköpslista | Familjens egna listor | Planerad |
 | Notiser | Via Home Assistants notify-tjänster | Planerad |

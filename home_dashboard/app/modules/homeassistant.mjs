@@ -26,6 +26,21 @@ export async function fetchStates(entityIds) {
   }));
 }
 
+/**
+ * Entity ids in a Home Assistant area (by name or id), including entities of
+ * devices placed in it, without hidden ones. The name is validated in config.
+ */
+export async function fetchAreaEntities(area) {
+  const template = `{{ area_entities(${JSON.stringify(area)}) | reject('is_hidden_entity') | list | tojson }}`;
+  const text = await request(`${base()}/template`, {
+    method: 'POST',
+    headers: { ...auth(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ template }),
+  });
+  const ids = JSON.parse(text);
+  return Array.isArray(ids) ? ids.filter(id => typeof id === 'string') : [];
+}
+
 /** Toggles a light/switch/fan/input_boolean. Callers must check permissions first. */
 export async function toggle(entityId) {
   const domain = entityId.split('.')[0];

@@ -10,7 +10,25 @@ const stateOf = id => {
   return states.get(id);
 };
 
+// Every area contains the same pretend room.
+const ROOM = ['light.taklampa', 'light.lavalampa', 'switch.laddare', 'sensor.rumstemperatur', 'sensor.batteri'];
+
+function fakeAttributes(id) {
+  const attributes = { friendly_name: nameOf(id) };
+  if (id.startsWith('sensor.')) {
+    const battery = id.includes('batteri');
+    attributes.device_class = battery ? 'battery' : 'temperature';
+    attributes.unit_of_measurement = battery ? '%' : '°C';
+  }
+  return attributes;
+}
+
 http.createServer((req, res) => {
+  if (req.method === 'POST' && req.url === '/template') {
+    req.resume();
+    req.on('end', () => res.writeHead(200, { 'Content-Type': 'text/plain' }).end(JSON.stringify(ROOM)));
+    return;
+  }
   const toggle = req.url.match(/^\/services\/\w+\/toggle$/);
   if (req.method === 'POST' && toggle) {
     let body = '';
@@ -27,7 +45,7 @@ http.createServer((req, res) => {
   if (m) {
     const id = decodeURIComponent(m[1]);
     res.writeHead(200, { 'Content-Type': 'application/json' })
-      .end(JSON.stringify({ state: stateOf(id), attributes: { friendly_name: nameOf(id), unit_of_measurement: id.startsWith('sensor.') ? '°C' : undefined } }));
+      .end(JSON.stringify({ state: stateOf(id), attributes: fakeAttributes(id) }));
     return;
   }
   res.writeHead(404).end();

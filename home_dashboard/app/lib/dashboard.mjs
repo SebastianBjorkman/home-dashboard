@@ -4,6 +4,7 @@ import { fetchMenu } from '../modules/schoolmenu.mjs';
 import { nextHoliday } from '../modules/countdown.mjs';
 import * as ha from '../modules/homeassistant.mjs';
 import { switchableEntities } from './access.mjs';
+import { keepUsefulRoomSensors, resolveChildEntities } from './devices.mjs';
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -21,14 +22,15 @@ export async function buildDashboard({ cfg, cache, identity, view, now = new Dat
   const schoolDay = { iso: schoolIso, ...isoWeek(schoolIso), isToday: schoolIso === today.iso };
 
   const kids = isChild ? cfg.children.filter(c => c.id === identity.childId) : cfg.children;
-  const switchable = switchableEntities(cfg, identity);
+  const resolved = new Map(await Promise.all(kids.map(async c => [c.id, await resolveChildEntities(c, cache)])));
+  const switchable = await switchableEntities(cfg, identity, c => resolved.get(c.id).ids);
   const result = {
     role: identity.role,
     view: isChild || view === 'kid' ? 'kid' : 'family',
     user: { name: identity.user.displayName },
     today: { iso: today.iso, dow: today.dow, week: today.week, minutes: today.minutes },
     schoolDay: { iso: schoolDay.iso, dow: schoolDay.dow, isToday: schoolDay.isToday },
-    children: await Promise.all(kids.map(c => childData(c, { cache, today, schoolDay, switchable }))),
+    children: await Promise.all(kids.map(c => childData(c, { cache, today, schoolDay, switchable, devices: resolved.get(c.id) }))),
     countdown: nextHoliday(cfg.holidays, today.iso),
     status: [],
   };
@@ -37,16 +39,24 @@ export async function buildDashboard({ cfg, cache, identity, view, now = new Dat
   return result;
 }
 
-async function childData(child, { cache, today, schoolDay, switchable }) {
+async function childData(child, { cache, today, schoolDay, switchable, devices }) {
   const out = { id: child.id, name: child.name, className: child.skola24?.className || null, schedule: null, week: null, lunch: null, devices: null, status: [] };
 
-  if (child.entities.length) {
-    if (ha.available()) {
-      const states = await cache.get('states:child:' + child.id, 10_000, () => ha.fetchStates(child.entities));
-      out.devices = markSwitchable(states.data || [], switchable);
-      note(out.status, 'Lampor', states);
-    } else {
+  if (child.area || child.entities.length) {
+    if (!ha.available()) {
       out.status.push({ source: 'Lampor', message: 'Home Assistant är inte ansluten' });
+    } else {
+      const { ids, inRoom, entry } = devices;
+      if (entry) note(out.status, 'Rum', entry);
+      if (entry && !entry.error && !inRoom.size) {
+        out.status.push({ source: 'Rum', message: `Hittar inga enheter i "${child.area}". Kontrollera områdets namn i Home Assistant.` });
+      }
+      if (ids.length) {
+        const states = await cache.get(`states:child:${child.id}:${ids.join(',')}`, 10_000, () => ha.fetchStates(ids));
+        out.devices = keepUsefulRoomSensors(markSwitchable(states.data || [], switchable), inRoom, child.entities)
+          .map(d => ({ ...d, inRoom: inRoom.has(d.id) }));
+        note(out.status, 'Lampor', states);
+      }
     }
   }
 
