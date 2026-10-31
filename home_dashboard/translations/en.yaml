@@ -1,0 +1,16 @@
+configuration:
+  children:
+    name: Children
+    description: >-
+      One entry per child. ha_user is the child's Home Assistant username; that
+      user only sees the kid view with their own schedule. skola24_group is an
+      optional sub-group such as 2B:1 to hide lessons for the other half of the class.
+  calendars:
+    name: Calendars
+    description: Calendar entities shown to parents, e.g. calendar.family.
+  entities:
+    name: Entities
+    description: Sensors and devices shown to parents, e.g. sensor.outdoor_temperature.
+  holidays:
+    name: Holidays
+    description: School holidays for the countdown ("nights left"). start is YYYY-MM-DD.

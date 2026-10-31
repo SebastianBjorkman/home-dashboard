@@ -1,0 +1,38 @@
+name: Home Dashboard
+version: "0.1.0"
+slug: home_dashboard
+description: Familjens vardag på en skärm – skolschema, skolmat, kalender och hemmet.
+url: https://github.com/SebastianBjorkman/home-dashboard
+arch:
+  - aarch64
+  - amd64
+init: false
+# Only reachable through Home Assistant Ingress: HA handles login and users,
+# and no port is exposed on the network.
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:view-dashboard-variant
+panel_title: Hemma
+homeassistant_api: true
+options:
+  children:
+    - name: Barn
+  calendars: []
+  entities: []
+  holidays: []
+schema:
+  children:
+    - name: str
+      ha_user: str?
+      skola24_host: match(^[a-z0-9-]+\.skola24\.se$)?
+      skola24_unit: str?
+      skola24_class: str?
+      skola24_group: str?
+      school_menu_url: url?
+  calendars:
+    - match(^calendar\.[a-z0-9_]+$)
+  entities:
+    - match(^[a-z_]+\.[a-z0-9_]+$)
+  holidays:
+    - name: str
+      start: match(^\d{4}-\d{2}-\d{2}$)

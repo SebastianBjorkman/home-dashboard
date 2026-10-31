@@ -1,0 +1,131 @@
+:root {
+  --bg: #f4f1ea;
+  --card: #fffdf8;
+  --text: #24211c;
+  --muted: #776f63;
+  --line: #e4ddd0;
+  --accent: #2f6f5e;
+  --accent-soft: #dcebe5;
+  --warn: #9a4d1c;
+  --radius: 18px;
+  font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161513;
+    --card: #211f1c;
+    --text: #f1ece3;
+    --muted: #a39b8e;
+    --line: #34312c;
+    --accent: #7cc4ad;
+    --accent-soft: #23362f;
+    --warn: #e7a172;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  padding: clamp(16px, 3vw, 40px);
+  font-size: clamp(16px, 1.3vw, 20px);
+  line-height: 1.4;
+}
+
+h2, h3, p, ol, ul { margin: 0; }
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: clamp(16px, 3vw, 32px);
+}
+.greeting { font-size: clamp(26px, 3.4vw, 48px); font-weight: 700; }
+.date { color: var(--muted); }
+.top-right { display: flex; align-items: center; gap: 20px; }
+.clock { font-size: clamp(36px, 6vw, 88px); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.switch {
+  color: var(--accent);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: clamp(12px, 2vw, 24px);
+  align-items: start;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(16px, 2vw, 28px);
+  display: grid;
+  gap: 10px;
+}
+.card h2 { font-size: 1.3em; }
+.card h3 { font-size: 0.85em; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 6px; }
+
+.muted { color: var(--muted); font-weight: 400; }
+.label { color: var(--muted); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.06em; }
+.span { font-size: 1.15em; font-weight: 600; }
+
+.lessons, .events { list-style: none; padding: 0; display: grid; gap: 4px; }
+.lessons li, .events li {
+  display: grid;
+  grid-template-columns: 7.5em 1fr auto;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+.events li { grid-template-columns: 4.5em 1fr; }
+.time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.room { color: var(--muted); font-size: 0.85em; }
+.lessons li.now { background: var(--accent-soft); font-weight: 600; }
+.lessons li.now .time { color: var(--accent); }
+.lessons li.past { opacity: 0.45; }
+
+.lunch { padding-top: 8px; border-top: 1px solid var(--line); }
+
+.countdown { text-align: center; align-content: center; }
+.big { font-size: clamp(40px, 5vw, 72px); font-weight: 700; color: var(--accent); line-height: 1.05; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.tile { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; }
+.tile-name { color: var(--muted); font-size: 0.85em; }
+.tile-state { font-size: 1.3em; font-weight: 600; }
+.tile.error .tile-state { color: var(--warn); }
+
+.status { color: var(--warn); font-size: 0.85em; }
+.offline { color: var(--warn); margin: 0 0 16px; }
+.empty, .loading { color: var(--muted); }
+
+/* Kid view: fewer things, bigger type, readable from across the room. */
+body[data-view="kid"] main { grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); }
+.kid-hero { grid-column: 1 / -1; padding: clamp(24px, 4vw, 48px); }
+.big-text { font-size: clamp(30px, 4.5vw, 64px); font-weight: 700; line-height: 1.1; }
+.kid-hero .big-text { color: var(--accent); }
+.kid-lunch .big-text { font-size: clamp(24px, 3vw, 40px); }
+
+.week { grid-column: 1 / -1; }
+.week-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.week-day { text-align: center; padding: 10px 4px; border-radius: 12px; display: grid; gap: 2px; }
+.week-day.current { background: var(--accent-soft); }
+.week-name { font-weight: 700; }
+.week-time { color: var(--muted); font-size: 0.8em; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 520px) {
+  .top { flex-direction: column; align-items: flex-start; }
+  .lessons li { grid-template-columns: 6.5em 1fr; }
+  .lessons .room { display: none; }
+}

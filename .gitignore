@@ -1,0 +1,4 @@
+node_modules/
+.DS_Store
+home_dashboard/app/dev/options.json
+home_dashboard/app/dev/data/

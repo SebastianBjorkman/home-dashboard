@@ -1,0 +1,18 @@
+{
+  "children": [
+    {
+      "name": "Barn",
+      "ha_user": "",
+      "skola24_host": "exempel.skola24.se",
+      "skola24_unit": "Skolan",
+      "skola24_class": "2B",
+      "skola24_group": "",
+      "school_menu_url": "https://www.exempel.se/meny-skola/skolkoket.html"
+    }
+  ],
+  "calendars": [],
+  "entities": [],
+  "holidays": [
+    { "name": "Jullovet", "start": "2026-12-21" }
+  ]
+}

@@ -1,0 +1,753 @@
+{
+"error": null,
+"data": {
+"lessonInfo": [
+{
+"guidId": "g0",
+"texts": [
+"NO",
+"XX",
+",2B"
+],
+"timeStart": "13:25:00",
+"timeEnd": "13:45:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g1",
+"texts": [
+"SL",
+"XX",
+"Träslöjd,2B:1"
+],
+"timeStart": "08:00:00",
+"timeEnd": "09:25:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g2",
+"texts": [
+"SO",
+"XX",
+",2B"
+],
+"timeStart": "09:50:00",
+"timeEnd": "10:25:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g3",
+"texts": [
+"SVA",
+"XX",
+",2B:1/SVA"
+],
+"timeStart": "12:00:00",
+"timeEnd": "13:00:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g4",
+"texts": [
+"SVA",
+"XX",
+",2B:2/SVA"
+],
+"timeStart": "08:00:00",
+"timeEnd": "09:00:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g5",
+"texts": [
+"SV",
+"XX",
+",2B:2/SV"
+],
+"timeStart": "08:00:00",
+"timeEnd": "09:00:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g6",
+"texts": [
+"EN",
+"XX",
+",2B"
+],
+"timeStart": "13:00:00",
+"timeEnd": "13:25:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g7",
+"texts": [
+"SL",
+"XX",
+"Textilslöjd,2B:2"
+],
+"timeStart": "12:00:00",
+"timeEnd": "13:25:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g8",
+"texts": [
+"NO",
+"XX",
+",2B"
+],
+"timeStart": "10:25:00",
+"timeEnd": "11:00:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g9",
+"texts": [
+"EN",
+"XX",
+",2B"
+],
+"timeStart": "09:00:00",
+"timeEnd": "09:25:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g10",
+"texts": [
+"SV",
+"XX",
+",2B:1/SV"
+],
+"timeStart": "12:00:00",
+"timeEnd": "13:00:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g11",
+"texts": [
+"LUNCH",
+"XX",
+"Matsal,2B"
+],
+"timeStart": "11:30:00",
+"timeEnd": "12:00:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g12",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "09:25:00",
+"timeEnd": "09:50:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g13",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "11:00:00",
+"timeEnd": "11:30:00",
+"dayOfWeekNumber": 1,
+"blockName": ""
+},
+{
+"guidId": "g14",
+"texts": [
+"SV",
+"XX",
+",2B/SV"
+],
+"timeStart": "12:45:00",
+"timeEnd": "13:45:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g15",
+"texts": [
+"SVA",
+"XX",
+",2B/SVA"
+],
+"timeStart": "12:30:00",
+"timeEnd": "12:45:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g16",
+"texts": [
+"SO",
+"XX",
+",2B"
+],
+"timeStart": "09:45:00",
+"timeEnd": "10:45:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g17",
+"texts": [
+"SVA",
+"XX",
+",2B/SVA"
+],
+"timeStart": "12:45:00",
+"timeEnd": "13:45:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g18",
+"texts": [
+"IDH",
+"XX",
+"Idrottssal 2,2B"
+],
+"timeStart": "08:10:00",
+"timeEnd": "09:10:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g19",
+"texts": [
+"MA",
+"XX",
+",2B"
+],
+"timeStart": "10:45:00",
+"timeEnd": "11:30:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g20",
+"texts": [
+"SV",
+"XX",
+",2B/SV"
+],
+"timeStart": "12:30:00",
+"timeEnd": "12:45:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g21",
+"texts": [
+"LUNCH",
+"XX",
+"Matsal,2B"
+],
+"timeStart": "11:30:00",
+"timeEnd": "12:00:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g22",
+"texts": [
+"ombyte",
+"XX",
+",2B"
+],
+"timeStart": "08:00:00",
+"timeEnd": "08:10:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g23",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "09:20:00",
+"timeEnd": "09:45:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g24",
+"texts": [
+"ombyte",
+"XX",
+",2B"
+],
+"timeStart": "09:10:00",
+"timeEnd": "09:20:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g25",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "12:00:00",
+"timeEnd": "12:30:00",
+"dayOfWeekNumber": 2,
+"blockName": ""
+},
+{
+"guidId": "g26",
+"texts": [
+"MU",
+"XX",
+"Musiksal,2B"
+],
+"timeStart": "08:00:00",
+"timeEnd": "08:45:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g27",
+"texts": [
+"MA",
+"XX",
+"Klassrum 12,2B"
+],
+"timeStart": "09:45:00",
+"timeEnd": "11:00:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g28",
+"texts": [
+"SV",
+"XX",
+",2B/SV"
+],
+"timeStart": "12:30:00",
+"timeEnd": "12:45:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g29",
+"texts": [
+"SO",
+"XX",
+",2B"
+],
+"timeStart": "08:50:00",
+"timeEnd": "09:20:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g30",
+"texts": [
+"SVA",
+"XX",
+",2B/SVA"
+],
+"timeStart": "11:00:00",
+"timeEnd": "11:30:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g31",
+"texts": [
+"SVA",
+"XX",
+",2B/SVA"
+],
+"timeStart": "12:45:00",
+"timeEnd": "13:45:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g32",
+"texts": [
+"SVA",
+"XX",
+",2B/SVA"
+],
+"timeStart": "12:30:00",
+"timeEnd": "12:45:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g33",
+"texts": [
+"SV",
+"XX",
+",2B/SV"
+],
+"timeStart": "11:00:00",
+"timeEnd": "11:30:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g34",
+"texts": [
+"SV",
+"XX",
+",2B/SV"
+],
+"timeStart": "12:45:00",
+"timeEnd": "13:45:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g35",
+"texts": [
+"LUNCH",
+"XX",
+"Matsal,2B"
+],
+"timeStart": "11:30:00",
+"timeEnd": "12:00:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g36",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "12:00:00",
+"timeEnd": "12:30:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g37",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "09:20:00",
+"timeEnd": "09:45:00",
+"dayOfWeekNumber": 3,
+"blockName": ""
+},
+{
+"guidId": "g38",
+"texts": [
+"IDH",
+"XX",
+"Idrottssal 1,2B"
+],
+"timeStart": "10:25:00",
+"timeEnd": "11:20:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g39",
+"texts": [
+"TK",
+"XX",
+",2B:1"
+],
+"timeStart": "08:40:00",
+"timeEnd": "09:20:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g40",
+"texts": [
+"MA",
+"XX",
+",2B"
+],
+"timeStart": "13:00:00",
+"timeEnd": "13:45:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g41",
+"texts": [
+"TK",
+"XX",
+",2B:2"
+],
+"timeStart": "08:00:00",
+"timeEnd": "08:40:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g42",
+"texts": [
+"SVA",
+"XX",
+",2B/SVA"
+],
+"timeStart": "09:45:00",
+"timeEnd": "10:15:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g43",
+"texts": [
+"BL",
+"XX",
+"Bildsal,2B:1"
+],
+"timeStart": "08:00:00",
+"timeEnd": "08:40:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g44",
+"texts": [
+"SV",
+"XX",
+",2B/SV"
+],
+"timeStart": "09:45:00",
+"timeEnd": "10:15:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g45",
+"texts": [
+"BL",
+"XX",
+"Bildsal,2B:2"
+],
+"timeStart": "08:40:00",
+"timeEnd": "09:20:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g46",
+"texts": [
+"EN",
+"XX",
+",2B"
+],
+"timeStart": "12:30:00",
+"timeEnd": "13:00:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g47",
+"texts": [
+"LUNCH",
+"XX",
+"Matsal,2B"
+],
+"timeStart": "11:30:00",
+"timeEnd": "12:00:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g48",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "09:20:00",
+"timeEnd": "09:45:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g49",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "12:00:00",
+"timeEnd": "12:30:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g50",
+"texts": [
+"ombyte",
+"XX",
+",2B"
+],
+"timeStart": "10:15:00",
+"timeEnd": "10:25:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g51",
+"texts": [
+"ombyte",
+"XX",
+",2B"
+],
+"timeStart": "11:20:00",
+"timeEnd": "11:30:00",
+"dayOfWeekNumber": 4,
+"blockName": ""
+},
+{
+"guidId": "g52",
+"texts": [
+"NO",
+"XX",
+",2B"
+],
+"timeStart": "10:45:00",
+"timeEnd": "11:15:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+},
+{
+"guidId": "g53",
+"texts": [
+"SO",
+"XX",
+",2B"
+],
+"timeStart": "11:15:00",
+"timeEnd": "11:30:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+},
+{
+"guidId": "g54",
+"texts": [
+"SV",
+"XX",
+",2B/SV"
+],
+"timeStart": "08:00:00",
+"timeEnd": "09:20:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+},
+{
+"guidId": "g55",
+"texts": [
+"EN",
+"XX",
+",2B"
+],
+"timeStart": "13:05:00",
+"timeEnd": "13:30:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+},
+{
+"guidId": "g56",
+"texts": [
+"NO",
+"XX",
+",2B"
+],
+"timeStart": "12:30:00",
+"timeEnd": "13:05:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+},
+{
+"guidId": "g57",
+"texts": [
+"SVA",
+"XX",
+",2B/SVA"
+],
+"timeStart": "08:00:00",
+"timeEnd": "09:20:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+},
+{
+"guidId": "g58",
+"texts": [
+"MA",
+"XX",
+"Klassrum 12,2B"
+],
+"timeStart": "09:45:00",
+"timeEnd": "10:45:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+},
+{
+"guidId": "g59",
+"texts": [
+"LUNCH",
+"XX",
+"Matsal,2B"
+],
+"timeStart": "11:30:00",
+"timeEnd": "12:00:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+},
+{
+"guidId": "g60",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "09:20:00",
+"timeEnd": "09:45:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+},
+{
+"guidId": "g61",
+"texts": [
+"RAST",
+"XX",
+",2B"
+],
+"timeStart": "12:00:00",
+"timeEnd": "12:30:00",
+"dayOfWeekNumber": 5,
+"blockName": ""
+}
+]
+},
+"exception": null,
+"validation": []
+}

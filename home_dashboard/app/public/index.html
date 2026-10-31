@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Hemma</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body data-view="family">
+  <header class="top">
+    <div>
+      <p class="greeting" id="greeting">Hemma</p>
+      <p class="date" id="date"></p>
+    </div>
+    <div class="top-right">
+      <a class="switch" id="switch" href="?view=kid" hidden>Barnvy</a>
+      <p class="clock" id="clock"></p>
+    </div>
+  </header>
+  <p class="offline" id="offline" role="status" hidden></p>
+  <main id="main" aria-live="polite">
+    <p class="loading">Hämtar dagen …</p>
+  </main>
+</body>
+</html>
