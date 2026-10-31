@@ -1,5 +1,5 @@
 name: Home Dashboard
-version: "0.1.0"
+version: "0.2.0"
 slug: home_dashboard
 description: Familjens vardag på en skärm – skolschema, skolmat, kalender och hemmet.
 url: https://github.com/SebastianBjorkman/home-dashboard
@@ -29,6 +29,8 @@ schema:
       skola24_class: str?
       skola24_group: str?
       school_menu_url: url?
+      entities:
+        - match(^[a-z_]+\.[a-z0-9_]+$)?
   calendars:
     - match(^calendar\.[a-z0-9_]+$)
   entities:

@@ -3,6 +3,7 @@ import { filterGroup, fetchWeek, resolveClass } from '../modules/skola24.mjs';
 import { fetchMenu } from '../modules/schoolmenu.mjs';
 import { nextHoliday } from '../modules/countdown.mjs';
 import * as ha from '../modules/homeassistant.mjs';
+import { switchableEntities } from './access.mjs';
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -20,23 +21,34 @@ export async function buildDashboard({ cfg, cache, identity, view, now = new Dat
   const schoolDay = { iso: schoolIso, ...isoWeek(schoolIso), isToday: schoolIso === today.iso };
 
   const kids = isChild ? cfg.children.filter(c => c.id === identity.childId) : cfg.children;
+  const switchable = switchableEntities(cfg, identity);
   const result = {
     role: identity.role,
     view: isChild || view === 'kid' ? 'kid' : 'family',
     user: { name: identity.user.displayName },
     today: { iso: today.iso, dow: today.dow, week: today.week, minutes: today.minutes },
     schoolDay: { iso: schoolDay.iso, dow: schoolDay.dow, isToday: schoolDay.isToday },
-    children: await Promise.all(kids.map(c => childData(c, { cache, today, schoolDay }))),
+    children: await Promise.all(kids.map(c => childData(c, { cache, today, schoolDay, switchable }))),
     countdown: nextHoliday(cfg.holidays, today.iso),
     status: [],
   };
 
-  if (!isChild) Object.assign(result, await homeData(cfg, cache, today, result.status));
+  if (!isChild) Object.assign(result, await homeData(cfg, cache, today, result.status, switchable));
   return result;
 }
 
-async function childData(child, { cache, today, schoolDay }) {
-  const out = { id: child.id, name: child.name, className: child.skola24?.className || null, schedule: null, week: null, lunch: null, status: [] };
+async function childData(child, { cache, today, schoolDay, switchable }) {
+  const out = { id: child.id, name: child.name, className: child.skola24?.className || null, schedule: null, week: null, lunch: null, devices: null, status: [] };
+
+  if (child.entities.length) {
+    if (ha.available()) {
+      const states = await cache.get('states:child:' + child.id, 10_000, () => ha.fetchStates(child.entities));
+      out.devices = markSwitchable(states.data || [], switchable);
+      note(out.status, 'Lampor', states);
+    } else {
+      out.status.push({ source: 'Lampor', message: 'Home Assistant är inte ansluten' });
+    }
+  }
 
   if (child.skola24) {
     const s = child.skola24;
@@ -66,7 +78,7 @@ async function childData(child, { cache, today, schoolDay }) {
   return out;
 }
 
-async function homeData(cfg, cache, today, status) {
+async function homeData(cfg, cache, today, status, switchable) {
   if (!cfg.calendars.length && !cfg.entities.length) return {};
   if (!ha.available()) {
     status.push({ source: 'Home Assistant', message: 'Inte ansluten (körs utanför Home Assistant)' });
@@ -84,8 +96,8 @@ async function homeData(cfg, cache, today, status) {
     note(status, 'Kalender', cal);
   }
   if (cfg.entities.length) {
-    const states = await cache.get('states', 30_000, () => ha.fetchStates(cfg.entities));
-    out.entities = states.data || [];
+    const states = await cache.get('states:home', 30_000, () => ha.fetchStates(cfg.entities));
+    out.entities = markSwitchable(states.data || [], switchable);
     note(status, 'Home Assistant', states);
   }
   return out;
@@ -110,6 +122,8 @@ export function summarizeWeek(lessons) {
     return { day, start: l[0]?.start || null, end: l.reduce((max, x) => (x.end > max ? x.end : max), '') || null };
   });
 }
+
+const markSwitchable = (states, switchable) => states.map(s => ({ ...s, switchable: switchable.has(s.id) && !s.error }));
 
 function note(list, source, entry) {
   if (!entry.error) return;

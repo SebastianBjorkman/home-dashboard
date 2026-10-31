@@ -27,3 +27,43 @@ export function identify(req, cfg, { dev = false, devUser = 'dev' } = {}) {
   const child = cfg.children.find(c => c.haUser && c.haUser === user.name);
   return { ok: true, user, role: child ? 'child' : 'parent', childId: child?.id ?? null };
 }
+
+// Only simple on/off devices can be switched from the dashboard.
+export const SWITCHABLE = new Set(['light', 'switch', 'fan', 'input_boolean']);
+
+/**
+ * Entities this viewer may switch: a child only their own list, a parent
+ * everything the dashboard shows. Nothing outside the configuration, ever.
+ */
+export function switchableEntities(cfg, identity) {
+  const own = identity.role === 'child'
+    ? cfg.children.find(c => c.id === identity.childId)?.entities || []
+    : [...cfg.entities, ...cfg.children.flatMap(c => c.entities)];
+  return new Set(own.filter(id => SWITCHABLE.has(id.split('.')[0])));
+}
+
+/**
+ * Write requests must come from our own page: a custom header cannot be sent
+ * cross-site without a CORS preflight we never answer, and browsers mark
+ * cross-site requests in Sec-Fetch-Site.
+ */
+export function isSameOriginWrite(req) {
+  if (req.headers['x-home-dashboard'] !== '1') return false;
+  const site = req.headers['sec-fetch-site'];
+  return !site || site === 'same-origin';
+}
+
+/** Fixed-window limit per user, enough for tapping a lamp but not for spamming. */
+export function createRateLimiter({ max = 10, windowMs = 10_000, now = Date.now } = {}) {
+  const hits = new Map();
+  return key => {
+    const t = now();
+    const entry = hits.get(key);
+    if (!entry || t - entry.start >= windowMs) {
+      hits.set(key, { start: t, count: 1 });
+      return true;
+    }
+    entry.count += 1;
+    return entry.count <= max;
+  };
+}

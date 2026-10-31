@@ -59,7 +59,12 @@ export function createCache({ file = null, now = Date.now } = {}) {
     return job;
   }
 
-  return { get };
+  /** Forgets keys starting with prefix, e.g. after switching a device. */
+  function invalidate(prefix) {
+    for (const key of store.keys()) if (key.startsWith(prefix)) store.delete(key);
+  }
+
+  return { get, invalidate };
 }
 
 function load(file) {

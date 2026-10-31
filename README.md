@@ -22,6 +22,7 @@ Nya versioner dyker upp i tilläggsbutiken och installeras med **Uppdatera**.
 | Nedräkning | "Sovningar kvar" till nästa lov | ✅ |
 | Kalender | Kalendrar i Home Assistant (M365, Google, ICS …) | ✅ |
 | Hemmet | Valfria sensorer/enheter från Home Assistant | ✅ |
+| Barnets lampor | Egna enheter per barn, tänd och släck med ett tryck | ✅ |
 | Lämning & hämtning | Vem lämnar och hämtar | Planerad |
 | Aktiviteter, sysslor, inköpslista | Familjens egna listor | Planerad |
 | Notiser | Via Home Assistants notify-tjänster | Planerad |
@@ -35,7 +36,10 @@ Nya versioner dyker upp i tilläggsbutiken och installeras med **Uppdatera**.
   schema. Kalendrar och enheter visas bara för vuxna.
 - **Varje hushåll kör sin egen kopia.** Inga data lämnar hemmet utöver hämtningen
   från Skola24 och kommunens webbplats; ingen central tjänst lagrar något.
-- **Läsbara källor, inga beroenden:** ren Node.js utan npm-paket, strikt CSP, endast GET.
+- **Styrning med tydliga gränser:** den enda skrivvägen slår av/på en enhet som
+  finns i inställningarna. Barn styr bara sina egna enheter, och anropet kräver
+  dashboardens egen header från samma ursprung och begränsas per användare.
+- **Läsbara källor, inga beroenden:** ren Node.js utan npm-paket, strikt CSP.
 - Lärares initialer från Skola24 sparas eller visas inte.
 
 ## Utveckla lokalt
@@ -47,9 +51,16 @@ npm test
 npm run dev   # http://127.0.0.1:8099 – ?view=kid för barnvyn
 ```
 
-I utvecklingsläget lyssnar servern bara på 127.0.0.1. HA-kalendrar och enheter
-är inte tillgängliga där; sätt `SUPERVISOR_TOKEN` och `HD_HA_URL`
-(t.ex. `http://homeassistant.local:8123/api`) med en långlivad token för att prova dem.
+I utvecklingsläget lyssnar servern bara på 127.0.0.1. För att prova enheter utan
+riktig HA finns en låtsas-HA:
+
+```bash
+npm run dev:ha    # i ett eget fönster
+HD_HA_URL=http://127.0.0.1:8123 SUPERVISOR_TOKEN=dev npm run dev
+```
+
+Mot en riktig HA: sätt `HD_HA_URL=http://homeassistant.local:8123/api` och
+`SUPERVISOR_TOKEN` till en långlivad token.
 
 ## Licens
 

@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
+const ENTITY = /^[a-z_]+\.[a-z0-9_]+$/;
 
 // Home Assistant validates options against config.yaml before start, but the
 // same file is used in dev mode, so normalize defensively here too.
@@ -21,12 +22,14 @@ export function normalizeConfig(raw = {}) {
       ? { host: str(c.skola24_host), unit: str(c.skola24_unit), className: str(c.skola24_class), group: str(c.skola24_group) }
       : null,
     menuUrl: /^https:\/\//.test(str(c.school_menu_url)) ? str(c.school_menu_url) : '',
+    // The child's own devices: shown in their view and the only ones they may switch.
+    entities: list(c.entities).map(str).filter(id => ENTITY.test(id)),
   }));
 
   return {
     children,
     calendars: list(raw.calendars).map(str).filter(id => /^calendar\.[a-z0-9_]+$/.test(id)),
-    entities: list(raw.entities).map(str).filter(id => /^[a-z_]+\.[a-z0-9_]+$/.test(id)),
+    entities: list(raw.entities).map(str).filter(id => ENTITY.test(id)),
     holidays: list(raw.holidays)
       .map(h => ({ name: str(h?.name), start: str(h?.start) }))
       .filter(h => h.name && DATE.test(h.start)),

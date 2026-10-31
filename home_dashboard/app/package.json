@@ -1,6 +1,6 @@
 {
   "name": "home-dashboard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Family dashboard add-on for Home Assistant",
   "private": true,
   "type": "module",
@@ -11,6 +11,7 @@
   "scripts": {
     "start": "node server.mjs",
     "dev": "HD_DEV=1 HD_OPTIONS=dev/options.json HD_DATA=dev/data node server.mjs",
+    "dev:ha": "node dev/fake-ha.mjs",
     "test": "node --test test/"
   }
 }

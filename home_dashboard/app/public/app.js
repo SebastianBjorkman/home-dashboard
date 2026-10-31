@@ -91,6 +91,7 @@ function childCard(c, d) {
     lunch.append(el('span', 'label', 'Lunch '), document.createTextNode(c.lunch.today));
     card.append(lunch);
   }
+  if (c.devices?.length) card.append(deviceTiles(c.devices));
   card.append(...c.status.map(statusLine));
   return card;
 }
@@ -128,15 +129,45 @@ function calendarCard(cal) {
 
 function entitiesCard(entities) {
   const card = el('section', 'card entities');
-  card.append(el('h2', null, 'Hemma'));
+  card.append(el('h2', null, 'Hemma'), deviceTiles(entities));
+  return card;
+}
+
+const STATE_TEXT = { on: 'På', off: 'Av', unavailable: 'Ej nåbar' };
+
+function deviceTiles(devices) {
   const grid = el('div', 'tiles');
-  for (const e of entities) {
-    const tile = el('div', 'tile' + (e.error ? ' error' : ''));
-    tile.append(el('span', 'tile-name', e.name), el('span', 'tile-state', e.error ? 'Saknas' : `${e.state}${e.unit ? ' ' + e.unit : ''}`));
+  for (const e of devices) {
+    const on = e.state === 'on';
+    const tile = el(e.switchable ? 'button' : 'div', 'tile' + (e.error ? ' error' : '') + (on ? ' on' : ''));
+    const state = e.error ? 'Saknas' : STATE_TEXT[e.state] || `${e.state}${e.unit ? ' ' + e.unit : ''}`;
+    tile.append(el('span', 'tile-name', e.name), el('span', 'tile-state', state));
+    if (e.switchable) {
+      tile.type = 'button';
+      tile.setAttribute('aria-pressed', String(on));
+      tile.addEventListener('click', () => toggleDevice(e.id, tile));
+    }
     grid.append(tile);
   }
-  card.append(grid);
-  return card;
+  return grid;
+}
+
+async function toggleDevice(entityId, tile) {
+  tile.disabled = true;
+  tile.classList.toggle('on');
+  try {
+    const res = await fetch('api/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Home-Dashboard': '1' },
+      body: JSON.stringify({ entity_id: entityId }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+  } catch (e) {
+    tile.classList.toggle('on');
+    $('#offline').textContent = 'Kunde inte styra: ' + e.message;
+    $('#offline').hidden = false;
+  }
+  load();
 }
 
 function statusCard(status) {
@@ -155,6 +186,11 @@ function kidView(d) {
   const c = d.children[0];
   if (!c) return [el('p', 'empty', 'Inget barn kopplat till den här användaren ännu.')];
   const cards = [kidToday(c, d)];
+  if (c.devices?.length) {
+    const lights = el('section', 'card kid-devices');
+    lights.append(el('p', 'label', 'Mina lampor'), deviceTiles(c.devices));
+    cards.push(lights);
+  }
   if (c.lunch?.today) {
     const lunch = el('section', 'card kid-lunch');
     lunch.append(el('p', 'label', d.schoolDay.isToday ? 'Lunch idag' : `Lunch på ${DAYS[d.schoolDay.dow]}`), el('p', 'big-text', c.lunch.today));

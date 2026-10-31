@@ -15,6 +15,21 @@ Ett block per barn.
 | `skola24_class` | `2B` | Klassen |
 | `skola24_group` | `2B:1` | Valfritt. Visar bara den halvklassen när klassen delas |
 | `school_menu_url` | `https://kommun.se/…/skolkoket.html` | Matsedelssidan för köket som lagar skolans mat |
+| `entities` | `- light.alva_taklampa` | Valfritt. Barnets egna enheter, som visas under "Mina lampor". Lampor, strömbrytare, fläktar och `input_boolean` kan slås av och på med ett tryck. Barnet kan bara styra det som står här. |
+
+Exempel med lampor:
+
+```yaml
+children:
+  - name: Alva
+    ha_user: alva
+    entities:
+      - light.alva_taklampa
+      - light.alva_lavalampa
+      - sensor.alva_rumstemperatur
+```
+
+Entitets-id hittar du under **Inställningar → Enheter och tjänster → Entiteter**.
 
 Skolschemat fungerar för skolor som visar klasscheman utan inloggning i
 Skola24:s schemavisare. Öppna
