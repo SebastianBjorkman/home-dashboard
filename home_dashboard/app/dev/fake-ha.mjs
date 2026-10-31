@@ -8,7 +8,8 @@ const AREAS = [
   { id: 'kok', name: 'Kök', entities: ['light.koksbank', 'sensor.kyl_temperatur'] },
   { id: 'hall', name: 'Hall', entities: ['light.hallen'] },
 ];
-const OTHER = ['sensor.utetemperatur', 'calendar.familj', 'calendar.skolan', 'media_player.vardagsrum'];
+const OTHER = ['sensor.utetemperatur', 'calendar.familj', 'calendar.skolan', 'media_player.vardagsrum', 'person.barnet', 'person.forälder'];
+const USER_IDS = { 'person.barnet': '0123456789abcdef0123456789abcdef', 'person.forälder': 'fedcba9876543210fedcba9876543210' };
 const ALL = [...AREAS.flatMap(a => a.entities), ...OTHER];
 
 const states = new Map();
@@ -20,6 +21,7 @@ const stateOf = id => {
 
 function attributesOf(id) {
   const attributes = { friendly_name: nameOf(id) };
+  if (USER_IDS[id]) attributes.user_id = USER_IDS[id];
   if (id.startsWith('sensor.')) {
     const battery = id.includes('batteri');
     attributes.device_class = battery ? 'battery' : 'temperature';

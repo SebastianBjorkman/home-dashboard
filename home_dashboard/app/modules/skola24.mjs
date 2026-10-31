@@ -22,20 +22,49 @@ async function call(path, body) {
   return res.data;
 }
 
-/** Looks up the ids Skola24 needs for a school + class. Cache the result (it rarely changes). */
-export async function resolveClass({ host, unit, className }) {
+async function fetchUnits(host) {
   const units = await call('services/skola24/get/timetable/viewer/units', { getTimetableViewerUnitsRequest: { hostName: host } });
-  const found = units.getTimetableViewerUnitsResponse.units.find(u => u.unitId.toLowerCase() === unit.toLowerCase());
+  return units.getTimetableViewerUnitsResponse.units;
+}
+
+async function findUnit(host, unit) {
+  const found = (await fetchUnits(host)).find(u => u.unitId.toLowerCase() === unit.toLowerCase());
   if (!found) throw new Error(`Hittar inte skolan "${unit}" på ${host}`);
   if (!found.anonymous?.classes) throw new Error(`${found.unitId} visar inte klasscheman utan inloggning`);
+  return found;
+}
 
-  const years = await call('get/active/school/years', { hostName: host, checkSchoolYearsFeatures: false });
+async function fetchClasses(host, unitGuid) {
   const selection = await call('get/timetable/selection', {
     hostName: host,
-    unitGuid: found.unitGuid,
+    unitGuid,
     filters: { class: true, course: false, group: false, period: false, room: false, student: false, subject: false, teacher: false },
   });
-  const cls = selection.classes.find(c => c.groupName.toLowerCase() === className.toLowerCase());
+  return selection.classes || [];
+}
+
+/** Schools on a Skola24 host whose class timetables are public. */
+export async function listUnits(host) {
+  return (await fetchUnits(host)).filter(u => u.anonymous?.classes).map(u => u.unitId).sort((a, b) => a.localeCompare(b, 'sv'));
+}
+
+/** Class names at a school, as Skola24 spells them. */
+export async function listClasses(host, unit) {
+  const found = await findUnit(host, unit);
+  return (await fetchClasses(host, found.unitGuid)).map(c => c.groupName).sort((a, b) => a.localeCompare(b, 'sv', { numeric: true }));
+}
+
+/** Half-class groups ("3A:1", "3A:2") seen in a week of lessons. */
+export function subGroups(lessons) {
+  const groups = new Set(lessons.map(l => l.group.split('/')[0]).filter(g => g.includes(':')));
+  return [...groups].sort((a, b) => a.localeCompare(b, 'sv', { numeric: true }));
+}
+
+/** Looks up the ids Skola24 needs for a school + class. Cache the result (it rarely changes). */
+export async function resolveClass({ host, unit, className }) {
+  const found = await findUnit(host, unit);
+  const years = await call('get/active/school/years', { hostName: host, checkSchoolYearsFeatures: false });
+  const cls = (await fetchClasses(host, found.unitGuid)).find(c => c.groupName.toLowerCase() === className.toLowerCase());
   if (!cls) throw new Error(`Hittar inte klassen "${className}" på ${found.unitId}`);
 
   return {

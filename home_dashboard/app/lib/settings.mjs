@@ -1,14 +1,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { AREA, ENTITY } from './config.mjs';
+import { AREA, ENTITY, normalizeConfig, toOptions } from './config.mjs';
 
 const MAX_IDS = 200;
 const CHILD_KEY = /^[\p{L}\p{N} _-]{1,64}$/u;
 
 /**
- * Settings changed from the dashboard's own settings page, kept in /data.
- * They sit on top of the add-on options: per child (by name) room, extra and
- * excluded entities, plus the parents' entities and calendars.
+ * Settings saved from the dashboard's settings page, kept in /data.
+ * Version 2 holds the whole configuration (same shape as the add-on options)
+ * and replaces the options entirely. Version 1 (0.4.0) only held per-child
+ * device choices on top of the options, and is still understood.
  */
 export function createSettings(file = null) {
   let data = load(file);
@@ -28,6 +29,20 @@ export function createSettings(file = null) {
 }
 
 export function validateSettings(raw) {
+  if (raw?.version === 2) return { version: 2, options: toOptions(normalizeConfig(raw.options || {})) };
+  return validateLegacy(raw);
+}
+
+/** The configuration in effect: saved settings if any, otherwise the add-on options. */
+export function applySettings(cfg, settings) {
+  if (!settings) return cfg;
+  if (settings.version === 2) return normalizeConfig(settings.options);
+  return applyLegacy(cfg, settings);
+}
+
+// ---------- Version 1 (0.4.0) ----------
+
+function validateLegacy(raw) {
   const ids = v => [...new Set((Array.isArray(v) ? v : []).filter(x => typeof x === 'string' && ENTITY.test(x)))].slice(0, MAX_IDS);
   const children = {};
   for (const [key, c] of Object.entries(raw?.children && typeof raw.children === 'object' ? raw.children : {})) {
@@ -41,9 +56,7 @@ export function validateSettings(raw) {
   return out;
 }
 
-/** The add-on options with the settings page's choices applied on top. */
-export function applySettings(cfg, settings) {
-  if (!settings) return cfg;
+function applyLegacy(cfg, settings) {
   return {
     ...cfg,
     entities: settings.entities ?? cfg.entities,
@@ -56,11 +69,11 @@ export function applySettings(cfg, settings) {
 }
 
 function load(file) {
-  if (!file || !fs.existsSync(file)) return validateSettings({});
+  if (!file || !fs.existsSync(file)) return null;
   try {
     return validateSettings(JSON.parse(fs.readFileSync(file, 'utf8')));
   } catch (e) {
-    console.error('Inställningar: kunde inte läsa, börjar om: ' + e.message);
-    return validateSettings({});
+    console.error('Inställningar: kunde inte läsa, använder tilläggets inställningar: ' + e.message);
+    return null;
   }
 }

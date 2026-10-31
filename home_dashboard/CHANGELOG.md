@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0
+
+- Everything is set on the settings page; the add-on options are only a fallback.
+- Children can be added and removed, and linked to a Home Assistant person.
+- School: paste the Skola24 link, then pick school, class and half-class from lists.
+- Menu link with a "Testa" button that shows whether the page can be read.
+- Holidays are edited as rows of name and date.
+- Settings from 0.4.0 keep working until the page is saved.
+
 ## 0.4.0
 
 - Fix: "Home Assistant är inte ansluten" inside the add-on. The base image's s6

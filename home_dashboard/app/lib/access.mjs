@@ -24,7 +24,9 @@ export function identify(req, cfg, { dev = false, devUser = 'dev' } = {}) {
     user = { id, name, displayName: String(req.headers['x-remote-user-display-name'] || name) };
   }
 
-  const child = cfg.children.find(c => c.haUser && c.haUser === user.name);
+  // A child is linked by their Home Assistant user id (picked as a person on the
+  // settings page) or, from older add-on options, by username.
+  const child = cfg.children.find(c => (c.haUserId && c.haUserId === user.id) || (c.haUser && c.haUser === user.name));
   return { ok: true, user, role: child ? 'child' : 'parent', childId: child?.id ?? null };
 }
 

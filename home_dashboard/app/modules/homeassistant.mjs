@@ -53,7 +53,10 @@ export async function fetchAreas() {
   return (Array.isArray(areas) ? areas : []).filter(a => typeof a?.id === 'string').map(a => ({ id: a.id, name: String(a.name || a.id) }));
 }
 
-/** Every entity as { id, name, domain, deviceClass }, for searching on the settings page. */
+/**
+ * Every entity as { id, name, domain, deviceClass }, for searching on the
+ * settings page. Persons also carry the user id of their login, if any.
+ */
 export async function fetchAllEntities() {
   const states = await ha('/states');
   return states
@@ -62,6 +65,7 @@ export async function fetchAllEntities() {
       name: s.attributes?.friendly_name || s.entity_id,
       domain: s.entity_id.split('.')[0],
       deviceClass: s.attributes?.device_class || null,
+      ...(s.entity_id.startsWith('person.') && s.attributes?.user_id ? { userId: s.attributes.user_id } : {}),
     }))
     .sort((a, b) => a.name.localeCompare(b.name, 'sv'));
 }

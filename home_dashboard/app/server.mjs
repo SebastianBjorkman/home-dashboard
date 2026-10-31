@@ -2,7 +2,10 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { AREA, loadConfig } from './lib/config.mjs';
+import { AREA, SKOLA24_HOST, isPublicHttpsUrl, loadConfig, toOptions } from './lib/config.mjs';
+import { addDays, isoWeek, localDay } from './lib/time.mjs';
+import { fetchWeek, listClasses, listUnits, resolveClass, subGroups } from './modules/skola24.mjs';
+import { fetchMenu } from './modules/schoolmenu.mjs';
 import { createRateLimiter, identify, isSameOriginWrite, switchableEntities } from './lib/access.mjs';
 import { createCache } from './lib/cache.mjs';
 import { buildDashboard } from './lib/dashboard.mjs';
@@ -13,6 +16,7 @@ import * as ha from './modules/homeassistant.mjs';
 const MAX_TOGGLE_BODY = 1024;
 const MAX_SETTINGS_BODY = 32 * 1024;
 const CATALOG_TTL_MS = 60_000;
+const SCHOOL_TTL_MS = 60 * 60_000;
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 
@@ -91,14 +95,14 @@ export function createServer({ cfg: baseCfg, cache, settings = createSettings(),
       }
 
       // Everything about settings is for parents only.
-      if (url.pathname.startsWith('/api/settings') || url.pathname.startsWith('/api/ha/') || url.pathname === '/settings') {
+      if (['/api/settings', '/api/ha/', '/api/school/', '/settings'].some(p => url.pathname.startsWith(p))) {
         if (who.role !== 'parent') return send(403, 'Bara vuxna kan ändra inställningar.');
       }
 
       if (url.pathname === '/api/settings' && req.method === 'POST') {
         const { body, error } = await readWrite(MAX_SETTINGS_BODY);
         if (error) return send(...error);
-        settings.save(body);
+        settings.save({ version: 2, options: body?.options });
         cache.invalidate('area:');
         cache.invalidate('states:');
         return send(204, '');
@@ -111,12 +115,13 @@ export function createServer({ cfg: baseCfg, cache, settings = createSettings(),
       }
 
       if (url.pathname === '/api/settings') {
-        return sendJson({
-          haAvailable: ha.available(),
-          children: cfg.children.map(c => ({ key: c.name.toLowerCase(), name: c.name, area: c.area, entities: c.entities, exclude: c.exclude })),
-          entities: cfg.entities,
-          calendars: cfg.calendars,
-        });
+        return sendJson({ haAvailable: ha.available(), options: toOptions(cfg) });
+      }
+
+      if (url.pathname.startsWith('/api/school/')) {
+        const result = await schoolLookup(url, cfg, cache);
+        if (result.error) return send(...result.error);
+        return sendJson(result.data);
       }
 
       if (url.pathname === '/api/ha/catalog') {
@@ -142,6 +147,53 @@ export function createServer({ cfg: baseCfg, cache, settings = createSettings(),
     if (!file) return send(404, 'Hittades inte.');
     return send(200, fs.readFileSync(path.join(root, 'public', file[0])), file[1]);
   });
+}
+
+/** Lookups behind the settings page's school pickers and the menu "Testa" button. */
+async function schoolLookup(url, cfg, cache) {
+  const q = name => (url.searchParams.get(name) || '').trim();
+  const host = q('host').toLowerCase();
+  const unit = q('unit').slice(0, 80);
+  const className = q('class').slice(0, 20);
+  const fail = (status, message) => ({ error: [status, message] });
+  const fromCache = async (key, fn) => {
+    const entry = await cache.get(key, SCHOOL_TTL_MS, fn);
+    return entry.data ? { data: entry.data } : fail(502, entry.error);
+  };
+
+  switch (url.pathname) {
+    case '/api/school/units':
+      if (!SKOLA24_HOST.test(host)) return fail(400, 'Ange en adress som slutar på .skola24.se');
+      return fromCache(`school:units:${host}`, () => listUnits(host));
+    case '/api/school/classes':
+      if (!SKOLA24_HOST.test(host) || !unit) return fail(400, 'Välj kommun och skola först.');
+      return fromCache(`school:classes:${host}:${unit}`.toLowerCase(), () => listClasses(host, unit));
+    case '/api/school/groups': {
+      if (!SKOLA24_HOST.test(host) || !unit || !className) return fail(400, 'Välj klass först.');
+      // This week and next, so a holiday week still finds the class's groups.
+      const today = localDay(new Date(), cfg.timezone);
+      const mondays = [addDays(today.iso, 1 - today.dow), addDays(today.iso, 8 - today.dow)];
+      return fromCache(`school:groups:${host}:${unit}:${className}:${mondays[0]}`.toLowerCase(), async () => {
+        const ref = await resolveClass({ host, unit, className });
+        const weeks = await Promise.all(mondays.map(mondayIso => {
+          const { week, weekYear } = isoWeek(mondayIso);
+          return fetchWeek(ref, { weekYear, week, mondayIso });
+        }));
+        return subGroups(weeks.flat());
+      });
+    }
+    case '/api/school/menu': {
+      const menuUrl = q('url');
+      if (!isPublicHttpsUrl(menuUrl)) return fail(400, 'Ange en https-länk till matsedelssidan.');
+      try {
+        return { data: (await fetchMenu(menuUrl))[0] };
+      } catch (e) {
+        return fail(502, e.code === 'blocked' ? 'Webbplatsen tillåter inte automatisk hämtning.' : e.message);
+      }
+    }
+    default:
+      return fail(404, 'Hittades inte.');
+  }
 }
 
 function readBody(req, limit) {

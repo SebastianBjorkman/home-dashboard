@@ -207,6 +207,34 @@ body[data-view="kid"] main { grid-template-columns: repeat(auto-fit, minmax(min(
   cursor: pointer;
 }
 .results button:hover, .results button:focus-visible { background: var(--accent-soft); }
+.field { display: grid; gap: 6px; }
+.hint { font-size: 0.85em; }
+.settings input[type="text"], .settings input[type="url"], .settings input[type="date"] {
+  font: inherit;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  width: 100%;
+  min-width: 0;
+}
+.inline { display: flex; gap: 8px; }
+.holidays { display: grid; gap: 8px; }
+.holiday-row { display: grid; grid-template-columns: 1fr 11em auto; gap: 8px; align-items: center; }
+.add-row { grid-column: 1 / -1; }
+.secondary, .danger, .icon {
+  font: inherit;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 18px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.danger { color: var(--warn); justify-self: start; margin-top: 8px; }
+.icon { padding: 0; width: 40px; height: 40px; font-size: 1.2em; }
 .save-bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; }
 .primary {
   font: inherit;

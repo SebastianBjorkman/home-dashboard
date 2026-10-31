@@ -22,6 +22,18 @@ test('config drops invalid entries', () => {
   assert.equal(cfg.children[0].skola24, null);
 });
 
+test('settings shape is normalized with limits, and round-trips', async () => {
+  const { toOptions, isPublicHttpsUrl } = await import('../lib/config.mjs');
+  const many = normalizeConfig({ children: Array.from({ length: 15 }, (_, i) => ({ name: 'B' + i })) });
+  assert.equal(many.children.length, 10);
+  const one = normalizeConfig({ children: [{ name: 'Alva', skola24_host: 'Kommun.Skola24.se', skola24_unit: 'Skolan', skola24_class: '2B', ha_user_id: 'inte-ett-id' }] });
+  assert.equal(one.children[0].skola24.host, 'kommun.skola24.se');
+  assert.equal(one.children[0].haUserId, '');
+  assert.deepEqual(normalizeConfig(toOptions(one)).children, one.children);
+  assert.equal(isPublicHttpsUrl('https://www.kommun.se/meny.html'), true);
+  assert.equal(isPublicHttpsUrl('https://10.0.0.1/'), false);
+});
+
 test('room names that could break out of a template are refused', () => {
   const areas = ['Alvas rum', 'Kök 2', 'x") }}{{ states', "a'b", '{{ x }}']
     .map(area => normalizeConfig({ children: [{ name: 'A', area }] }).children[0].area);

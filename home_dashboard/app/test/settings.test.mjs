@@ -62,10 +62,10 @@ test('settings survive a restart', () => {
 });
 
 test('a child cannot see or change settings', () => withServer('alva', async ({ get, save }) => {
-  for (const p of ['/settings', '/api/settings', '/api/ha/catalog', '/api/ha/area?id=alvas_rum']) {
+  for (const p of ['/settings', '/settings.js', '/api/settings', '/api/ha/catalog', '/api/ha/area?id=alvas_rum']) {
     assert.equal((await get(p)).status, 403, p);
   }
-  assert.equal((await save({ children: { alva: { area: 'kok' } } })).status, 403);
+  assert.equal((await save({ options: { children: [] } })).status, 403);
 }));
 
 test('a parent gets rooms and entities from Home Assistant to pick from', () => withServer('pappa', async ({ get }) => {
@@ -77,13 +77,43 @@ test('a parent gets rooms and entities from Home Assistant to pick from', () => 
   assert.equal((await get('/api/ha/area?id=' + encodeURIComponent('x") }}'))).status, 400);
 }));
 
-test('saving from the settings page changes what the child sees and may switch', () => withServer('pappa', async ({ get, save }) => {
-  const res = await save({ children: { alva: { area: 'alvas_rum', entities: ['light.hallen'], exclude: ['switch.alva_laddare'] } }, entities: ['sensor.ute'], calendars: [] });
-  assert.equal(res.status, 204);
-  const settings = await (await get('/api/settings')).json();
-  assert.equal(settings.children[0].area, 'alvas_rum');
-  const alva = (await (await get('/api/dashboard')).json()).children[0];
-  assert.deepEqual(alva.devices.map(d => d.id).sort(), ['light.alva_tak', 'light.hallen', 'sensor.alva_temp']);
+test('saving from the settings page replaces the whole configuration', () => withServer('pappa', async ({ get, save }) => {
+  const options = {
+    children: [{ name: 'Alva', ha_user_id: 'a'.repeat(32), area: 'alvas_rum', entities: ['light.hallen'], exclude: ['switch.alva_laddare'] }],
+    entities: ['sensor.ute'],
+    calendars: [],
+    holidays: [{ name: 'Jullovet', start: '2026-12-23' }],
+  };
+  assert.equal((await save({ options })).status, 204);
+  const saved = (await (await get('/api/settings')).json()).options;
+  assert.deepEqual(saved.children.map(c => c.name), ['Alva']);
+  assert.equal(saved.children[0].ha_user_id, 'a'.repeat(32));
+  assert.deepEqual(saved.holidays, [{ name: 'Jullovet', start: '2026-12-23' }]);
+  const d = await (await get('/api/dashboard')).json();
+  assert.deepEqual(d.children.map(c => c.name), ['Alva']);
+  assert.deepEqual(d.children[0].devices.map(x => x.id).sort(), ['light.alva_tak', 'light.hallen', 'sensor.alva_temp']);
+}));
+
+test('a child linked by person (user id) gets the kid view after the settings are saved', async () => {
+  const settings = createSettings();
+  settings.save({ version: 2, options: { children: [{ name: 'Alva', ha_user_id: 'b'.repeat(32) }] } });
+  const merged = applySettings(cfg, settings.get());
+  const { identify, INGRESS_PROXY } = await import('../lib/access.mjs');
+  const who = identify({ socket: { remoteAddress: INGRESS_PROXY }, headers: { 'x-remote-user-id': 'b'.repeat(32), 'x-remote-user-name': 'vadsomhelst' } }, merged);
+  assert.deepEqual([who.role, who.childId], ['child', '0']);
+});
+
+test('school lookups validate input before contacting anyone', () => withServer('pappa', async ({ get }) => {
+  assert.equal((await get('/api/school/units?host=evil.example.com')).status, 400);
+  assert.equal((await get('/api/school/classes?host=kommun.skola24.se')).status, 400);
+  assert.equal((await get('/api/school/groups?host=kommun.skola24.se&unit=Skolan')).status, 400);
+  for (const url of ['http://kommun.se/meny', 'https://localhost/meny', 'https://192.168.1.10/meny', 'https://nas.local/meny', 'file:///etc/passwd']) {
+    assert.equal((await get('/api/school/menu?url=' + encodeURIComponent(url))).status, 400, url);
+  }
+}));
+
+test('a child cannot use the school lookups', () => withServer('alva', async ({ get }) => {
+  assert.equal((await get('/api/school/units?host=kommun.skola24.se')).status, 403);
 }));
 
 test('saving needs the same write protections as switching', () => withServer('pappa', async ({ save }) => {
