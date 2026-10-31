@@ -1,6 +1,20 @@
 # Home Dashboard
 
-## Inställningar
+## Rum och enheter – enklast i dashboarden
+
+Öppna **Hemma** i sidofältet och klicka på **Inställningar** (bara vuxna ser den).
+Där väljer du:
+
+- **Rum** för varje barn i en lista över områdena i Home Assistant. Rummets lampor,
+  strömbrytare, fläktar och temperatursensorer visas med kryssrutor – bocka ur det
+  barnet inte ska se eller styra.
+- **Fler enheter** för barnet, t.ex. hallampan, genom att söka på namnet.
+- **Enheter och kalendrar** i familjevyn.
+
+Klicka **Spara**. Ändringen syns direkt, utan omstart. Det du väljer här gäller
+före motsvarande fält i tilläggets inställningar nedan.
+
+## Tilläggets inställningar
 
 ### children
 
@@ -59,6 +73,11 @@ Sensorer och enheter som visas för vuxna, t.ex. `sensor.utetemperatur`.
 
 Lov för nedräkningen. `start` är första lovdagen, `ÅÅÅÅ-MM-DD`. Hämta datumen
 från kommunens läsårstider.
+
+## Felsökning
+
+Fliken **Logg** på tillägget visar vid start om Home Assistant är ansluten.
+Står det "ingen token", starta om tillägget och kontrollera att det är version 0.4.0 eller senare.
 
 ## Ett konto för barnet
 

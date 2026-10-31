@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
-const ENTITY = /^[a-z_]+\.[a-z0-9_]+$/;
+export const ENTITY = /^[a-z_]+\.[a-z0-9_]+$/;
 // Area names end up inside a Home Assistant template, so no quotes or braces.
-const AREA = /^[\p{L}\p{N} _-]{1,64}$/u;
+export const AREA = /^[\p{L}\p{N} _-]{1,64}$/u;
 
 // Home Assistant validates options against config.yaml before start, but the
 // same file is used in dev mode, so normalize defensively here too.

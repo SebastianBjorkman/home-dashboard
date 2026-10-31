@@ -41,6 +41,31 @@ export async function fetchAreaEntities(area) {
   return Array.isArray(ids) ? ids.filter(id => typeof id === 'string') : [];
 }
 
+/** All areas as [{ id, name }], for the settings page. */
+export async function fetchAreas() {
+  const template = "{% set ns = namespace(out=[]) %}{% for a in areas() %}{% set ns.out = ns.out + [{'id': a, 'name': area_name(a)}] %}{% endfor %}{{ ns.out | tojson }}";
+  const text = await request(`${base()}/template`, {
+    method: 'POST',
+    headers: { ...auth(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ template }),
+  });
+  const areas = JSON.parse(text);
+  return (Array.isArray(areas) ? areas : []).filter(a => typeof a?.id === 'string').map(a => ({ id: a.id, name: String(a.name || a.id) }));
+}
+
+/** Every entity as { id, name, domain, deviceClass }, for searching on the settings page. */
+export async function fetchAllEntities() {
+  const states = await ha('/states');
+  return states
+    .map(s => ({
+      id: s.entity_id,
+      name: s.attributes?.friendly_name || s.entity_id,
+      domain: s.entity_id.split('.')[0],
+      deviceClass: s.attributes?.device_class || null,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'sv'));
+}
+
 /** Toggles a light/switch/fan/input_boolean. Callers must check permissions first. */
 export async function toggle(entityId) {
   const domain = entityId.split('.')[0];

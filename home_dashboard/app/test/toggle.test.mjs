@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import http from 'node:http';
 import { createRateLimiter, switchableEntities } from '../lib/access.mjs';
 import { normalizeConfig } from '../lib/config.mjs';
 import { createCache } from '../lib/cache.mjs';
 import { createServer } from '../server.mjs';
+import { fakeHomeAssistant } from './fake-ha-server.mjs';
 
 const cfg = normalizeConfig({
   children: [
@@ -17,49 +17,6 @@ const cfg = normalizeConfig({
   ],
   entities: ['light.kok', 'sensor.ute'],
 });
-
-// A stand-in for Home Assistant's REST API that records every call.
-async function fakeHomeAssistant() {
-  const states = {
-    'light.alva_tak': 'off', 'light.hallen': 'off', 'light.theo_tak': 'off', 'light.kok': 'on',
-    'switch.alva_laddare': 'on', 'sensor.alva_temp': '21', 'sensor.alva_batteri': '80', 'sensor.ute': '7',
-  };
-  const deviceClass = { 'sensor.alva_temp': 'temperature', 'sensor.alva_batteri': 'battery', 'sensor.ute': 'temperature' };
-  const areas = { 'Alvas rum': ['light.alva_tak', 'switch.alva_laddare', 'sensor.alva_temp', 'sensor.alva_batteri', 'media_player.alva'] };
-  const calls = [];
-  const server = http.createServer((req, res) => {
-    if (req.headers.authorization !== 'Bearer test-token') { res.writeHead(401).end(); return; }
-    const toggle = req.url.match(/^\/services\/(\w+)\/toggle$/);
-    if (req.method === 'POST' && toggle) {
-      let body = '';
-      req.on('data', c => (body += c));
-      req.on('end', () => {
-        const { entity_id } = JSON.parse(body);
-        calls.push(entity_id);
-        states[entity_id] = states[entity_id] === 'on' ? 'off' : 'on';
-        res.writeHead(200, { 'Content-Type': 'application/json' }).end('[]');
-      });
-      return;
-    }
-    if (req.method === 'POST' && req.url === '/template') {
-      let body = '';
-      req.on('data', c => (body += c));
-      req.on('end', () => {
-        const area = JSON.parse(body).template.match(/area_entities\(("[^"]*")\)/)[1];
-        res.writeHead(200, { 'Content-Type': 'text/plain' }).end(JSON.stringify(areas[JSON.parse(area)] || []));
-      });
-      return;
-    }
-    const id = decodeURIComponent(req.url.replace('/states/', ''));
-    if (req.method === 'GET' && id in states) {
-      res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ state: states[id], attributes: { friendly_name: id, device_class: deviceClass[id] } }));
-      return;
-    }
-    res.writeHead(404).end();
-  });
-  await new Promise(r => server.listen(0, '127.0.0.1', r));
-  return { server, calls, states, url: `http://127.0.0.1:${server.address().port}` };
-}
 
 async function withDashboard(devUser, fn, { rateLimit, config = cfg } = {}) {
   const ha = await fakeHomeAssistant();

@@ -47,6 +47,7 @@ function render(d) {
   sw.hidden = d.role !== 'parent';
   sw.textContent = d.view === 'kid' ? 'Familjevy' : 'Barnvy';
   sw.href = d.view === 'kid' ? '?' : '?view=kid';
+  $('#settings-link').hidden = d.role !== 'parent';
 
   const cards = d.view === 'kid' ? kidView(d) : familyView(d);
   $('#main').replaceChildren(...cards);

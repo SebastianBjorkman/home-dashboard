@@ -8,8 +8,9 @@ med en egen vy för barnen.
 
 1. **Inställningar → Tillägg → Tilläggsbutik → ⋮ → Förråd** och lägg till
    `https://github.com/SebastianBjorkman/home-dashboard`
-2. Installera **Home Dashboard**, fyll i inställningarna (se [DOCS](home_dashboard/DOCS.md)) och starta.
+2. Installera **Home Dashboard**, fyll i barn och skola (se [DOCS](home_dashboard/DOCS.md)) och starta.
 3. Slå på **Visa i sidofältet**. Dashboarden heter *Hemma*.
+4. Välj rum, enheter och kalendrar under **Inställningar** i dashboarden.
 
 Nya versioner dyker upp i tilläggsbutiken och installeras med **Uppdatera**.
 

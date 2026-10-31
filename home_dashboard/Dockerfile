@@ -8,4 +8,6 @@ WORKDIR /app
 COPY app/ /app/
 RUN rm -rf /app/test /app/dev
 
-CMD ["node", "/app/server.mjs"]
+# Run Node directly instead of under the base image's s6 init: s6 resets the
+# environment, which would drop SUPERVISOR_TOKEN and TZ.
+ENTRYPOINT ["node", "/app/server.mjs"]

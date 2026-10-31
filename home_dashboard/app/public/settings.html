@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Inställningar – Hemma</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="settings.js" defer></script>
+</head>
+<body class="settings-page">
+  <header class="top">
+    <div>
+      <p class="greeting">Inställningar</p>
+      <p class="date">Rum och enheter hämtas direkt från Home Assistant.</p>
+    </div>
+    <div class="top-right">
+      <a class="switch" href="./">Tillbaka</a>
+    </div>
+  </header>
+  <p class="offline" id="error" role="alert" hidden></p>
+  <main id="main" class="settings">
+    <p class="loading">Hämtar rum och enheter …</p>
+  </main>
+</body>
+</html>

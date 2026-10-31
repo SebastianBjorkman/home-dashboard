@@ -26,6 +26,15 @@ export async function resolveChildEntities(child, cache) {
   return { ids, inRoom: new Set(fromArea), entry };
 }
 
+/** The room entities the dashboard would show, with names, for the settings page. */
+export function roomCandidates(areaIds, catalog) {
+  const byId = new Map(catalog.map(e => [e.id, e]));
+  return areaIds
+    .map(id => byId.get(id))
+    .filter(e => e && AREA_DOMAINS.has(e.domain) && (e.domain !== 'sensor' || AREA_SENSOR_CLASSES.has(e.deviceClass)))
+    .map(e => ({ id: e.id, name: e.name }));
+}
+
 /** Drops room sensors that are not temperature/humidity; hand-picked ones always stay. */
 export function keepUsefulRoomSensors(states, inRoom, manual) {
   const picked = new Set(manual);

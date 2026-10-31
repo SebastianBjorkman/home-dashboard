@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0
+
+- Fix: "Home Assistant är inte ansluten" inside the add-on. The base image's s6
+  init reset the environment and dropped SUPERVISOR_TOKEN; Node now runs directly.
+- New settings page (Inställningar, parents only): choose each child's room from
+  a list of Home Assistant areas, untick room devices, and search for extra
+  entities, family devices and calendars. Saved in /data and applied on top of
+  the add-on options.
+- The log says at start whether Home Assistant is connected.
+
 ## 0.3.0
 
 - `area` under a child picks up their room from Home Assistant automatically:
